@@ -1,34 +1,32 @@
-/*
-Task 01: Create an array of objects representing customers with 'name', 'purchases', and 'loyaltyPoints' properties. Write a function to transform the array by doubling the 'loyaltyPoints' of customers with more than 5 purchases.
-*/
+function memoize(func) {
+  const cache = {};
 
-const customers = [
-  {
-    name: "Shahin",
-    purchases: 3,
-    loyaltyPoints: 4,
-  },
-  {
-    name: "Tuhin",
-    purchases: 7,
-    loyaltyPoints: 6,
-  },
-  {
-    name: "Rubin",
-    purchases: 4,
-    loyaltyPoints: 4,
-  },
-];
+  return function (...args) {
+    const key = JSON.stringify(args);
 
-const doubleLoyaltyPoints = (customers) => {
-  return customers.map((customer) => ({
-    ...customer,
-    loyaltyPoints:
-      customer.purchases > 5
-        ? customer.loyaltyPoints * 2
-        : customer.loyaltyPoints,
-  }));
-};
+    if (cache[key] === undefined) {
+      // Calculate and cache the result for the given arguments
+      cache[key] = func(...args);
+    }
 
-const transformedCustomers  = doubleLoyaltyPoints(customers);
-console.log(transformedCustomers );
+    return cache[key];
+  };
+}
+
+// Example: Expensive function to calculate the factorial of a number
+function calculateFactorial(n) {
+  if (n === 0 || n === 1) {
+    return 1;
+  } else {
+    return n * calculateFactorial(n - 1);
+  }
+}
+
+// Apply memoization to the factorial function
+const memoizedFactorial = memoize(calculateFactorial);
+
+// Test the memoized function
+console.log(memoizedFactorial(5)); // calculates and caches the result for 5
+console.log(memoizedFactorial(5)); // returns the cached result for 5
+console.log(memoizedFactorial(7)); // calculates and caches the result for 7
+console.log(memoizedFactorial(7)); // returns the cached result for 7
